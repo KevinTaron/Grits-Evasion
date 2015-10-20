@@ -1,0 +1,38 @@
+ig.module(
+  'game.entities.player'
+)
+.requires(
+    'game.entities.robot'
+)
+.defines(function() {
+  EntityPlayer = EntityRobot.extend({
+
+    size: { x: 70, y: 70},
+    animSheet: new ig.AnimationSheet( 'media/grits_player.png', 70, 70),
+
+    init: function(x, y, settings) {
+      this.parent(x, y, settings);
+    },
+
+    update: function() {
+        var mx = (ig.input.mouse.x + ig.game.screen.x);
+        var my = (ig.input.mouse.y + ig.game.screen.y);
+        var r = Math.atan2(my-this.pos.y, mx-this.pos.x);
+
+        var deltaY = Math.sin(r) * (100 * this.speed);
+        var deltaX = Math.cos(r) * (100 * this.speed);
+
+        if (mx < this.pos.x + 3 && mx > this.pos.x - 3 && my < this.pos.y + 3 && my > this.pos.y - 3) {
+            this.currentAnim = this.anims.idle;
+            this.vel.x = 0;
+            this.vel.y = 0;
+        } else {
+            this.currentAnim = this.anims.walk;
+            this.maxVel.x = this.vel.x = this.accel.x = deltaX;
+            this.vel.y = deltaY;
+        }
+
+        this.parent();
+    }
+  });
+});
